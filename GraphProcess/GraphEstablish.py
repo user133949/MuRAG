@@ -135,12 +135,12 @@ class GraphProcessor:
             final_graph_dir.mkdir(parents=True, exist_ok=True)
             
             # 保存带向量的图谱
-            final_graph_with_vector_path = final_graph_dir / f"{pdf_name}_final_graph_with_vector.json"
+            final_graph_with_vector_path = final_graph_dir / f"{pdf_name}_graph_with_vector.json"
             with open(final_graph_with_vector_path, 'w', encoding='utf-8') as f:
                 json.dump(final_graph_with_vectors, f, indent=4, ensure_ascii=False)
             
             # 保存最终图谱
-            final_graph_path = final_graph_dir / f"{pdf_name}_final_graph.json"
+            final_graph_path = final_graph_dir / f"{pdf_name}_graph.json"
             with open(final_graph_path, 'w', encoding='utf-8') as f:
                 json.dump(final_graph, f, indent=4, ensure_ascii=False)
             

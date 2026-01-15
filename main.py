@@ -10,6 +10,7 @@ except NameError:
     ROOT = Path(".").resolve()
 
 from GraphProcess.GraphEstablish import GraphProcessor
+from GraphProcess.AnchorSimilarityEdge import add_similarity_edges_for_anchor_nodes
 from LLM.LLMclient import ChatModel
 from Database.joint import JointHandler
 from MinerU.DocumentParser import parse_doc
@@ -101,7 +102,13 @@ def main():
     print("开始构建图。")
     processor = GraphProcessor(api_key=api_key)
     processor.contentlist_to_graph(pdf_name=pdf_name)
-
+    add_similarity_edges_for_anchor_nodes(
+        graph_with_vector_path = graph_final_dir / f"{pdf_name}_graph_with_vector.json"
+        graph_no_vector_path = graph_final_dir / f"{pdf_name}_graph.json"
+        output_with_vector_path = graph_final_dir / f"{pdf_name}_final_graph_with_vector.json"
+        output_no_vector_path = graph_final_dir / f"{pdf_name}_final_graph.json"
+        similarity_threshold = 0.8
+    )
     json_path_novector = graph_final_dir / f"{pdf_name}_final_graph.json"
     json_path_withvector = graph_final_dir / f"{pdf_name}_final_graph_with_vector.json"
 
@@ -158,14 +165,12 @@ def main():
         # 获取 RAG 参数并提取权重
         rag_parameters = get_system_parameter(model=model, reasoning_model=reasoning_model, query=query, api_key=api_key, base_url=base_url)
         parameters = extract_weights(rag_parameters)
-        alpha = parameters.get("alpha")
-        beta = parameters.get("beta")
         lam = parameters.get("lam")
 
         # 计算 chunk 的 score
         scores_anchor, scores_text, scores_mm = chunk_score(query=query, global_data=anchor_nodes, local_data=entity_nodes,
                                                             pagerank=pagerank, closeness=closeness,
-                                                            encoder_model=encoder, alpha=alpha, beta=beta, lam=lam)
+                                                            encoder_model=encoder, lam=lam)
 
         def _sorted_keys_by_score(scores: dict):
             return [k for k, _ in sorted(scores.items(), key=lambda x: x[1], reverse=True)]
@@ -174,34 +179,33 @@ def main():
         mm_sorted = _sorted_keys_by_score(scores_mm)
         text_sorted = _sorted_keys_by_score(scores_text)
 
-        # 选择 chunk（保持原有策略：anchor <=4, mm <=3, text 补齐到10）
         selected = []
         selected_anchor_ids = []
         selected_mm_ids = []
         selected_text_ids = []
 
         for cid in anchor_sorted:
-            if len(selected_anchor_ids) >= 4:
+            if len(selected_anchor_ids) >= 8:
                 break
             if cid not in selected:
                 selected_anchor_ids.append(cid)
                 selected.append(cid)
 
         for cid in mm_sorted:
-            if len(selected_mm_ids) >= 3:
+            if len(selected_mm_ids) >= 6:
                 break
             if cid not in selected:
                 selected_mm_ids.append(cid)
                 selected.append(cid)
 
         for cid in text_sorted:
-            if len(selected) >= 10:
+            if len(selected) >= 20:
                 break
             if cid not in selected:
                 selected_text_ids.append(cid)
                 selected.append(cid)
 
-        final_selected = selected[:10]
+        final_selected = selected[:20]
         final_anchor_ids = [cid for cid in selected_anchor_ids if cid in final_selected]
         final_mm_ids = [cid for cid in selected_mm_ids if cid in final_selected]
         final_text_ids = [cid for cid in selected_text_ids if cid in final_selected]

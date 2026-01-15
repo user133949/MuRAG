@@ -49,7 +49,7 @@ def extract_weights(llm_response: str, default: float = 0.5) -> Dict[str, float]
         default (float): 默认权重值
     """
     # 默认权重值
-    allowed_keys = {"alpha", "beta", "lam"}
+    allowed_keys = {"lam"}
     weights = {key: default for key in allowed_keys}
 
     try:
