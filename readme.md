@@ -38,7 +38,6 @@ Milvus vector database running
 Python dependencies installed
 
 # 📌 Getting Started
-
 Below is a minimal run example:
 
 # Install dependencies

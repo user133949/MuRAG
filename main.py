@@ -103,10 +103,10 @@ def main():
     processor = GraphProcessor(api_key=api_key)
     processor.contentlist_to_graph(pdf_name=pdf_name)
     add_similarity_edges_for_anchor_nodes(
-        graph_with_vector_path = graph_final_dir / f"{pdf_name}_graph_with_vector.json"
-        graph_no_vector_path = graph_final_dir / f"{pdf_name}_graph.json"
-        output_with_vector_path = graph_final_dir / f"{pdf_name}_final_graph_with_vector.json"
-        output_no_vector_path = graph_final_dir / f"{pdf_name}_final_graph.json"
+        graph_with_vector_path = graph_final_dir / f"{pdf_name}_graph_with_vector.json",
+        graph_no_vector_path = graph_final_dir / f"{pdf_name}_graph.json",
+        output_with_vector_path = graph_final_dir / f"{pdf_name}_final_graph_with_vector.json",
+        output_no_vector_path = graph_final_dir / f"{pdf_name}_final_graph.json",
         similarity_threshold = 0.8
     )
     json_path_novector = graph_final_dir / f"{pdf_name}_final_graph.json"
