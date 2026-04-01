@@ -12,16 +12,27 @@ The system is designed to work with large collections of documents and to suppor
 
 # 🧱 Architecture
 HMG-RAG is composed of the following major parts:
+
 ├── DocProcess/           # Document parsing and processing
+
 ├── GraphProcess/         # Graph creation and manipulations
+
 ├── EntityExtraction/     # Entity detection and Linking
+
 ├── Retrieval/            # Vector storage and search
+
 ├── Generation/           # LLM-based answer generation
+
 ├── MinerU/               # MinerU integration
+
 ├── LLM/                  # Large Language Model interfaces
+
 ├── Utils/                # Utilities and helpers
+
 ├── main.py               # Main entrypoint
+
 ├── data/pdf              # Example documents
+
 └── ...
 
 # 📝 Features
